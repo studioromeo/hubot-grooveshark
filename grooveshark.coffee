@@ -38,4 +38,11 @@ module.exports = (robot) ->
     io.emit "com", "Grooveshark.previous()"
     msg.send "Really? Again...really?"
 
+  robot.respond /what's playing$/i, (msg) ->
+    io.emit "com", "Grooveshark.getCurrentSongStatus()"
+    io.on "com", (res) ->
+      msg.send "It's " + res.song.songName + " by " + res.song.artistName
+
+
+
 

@@ -3,5 +3,9 @@ var io="undefined"==typeof module?{}:module.exports;(function(){(function(a,b){v
 
 var socket = io.connect('http://localhost:1337');
 socket.on('com', function (data) {
-	eval(data);
+	var response = eval(data);
+
+	if (response) {
+		socket.emit('com', response);
+	}
 });
