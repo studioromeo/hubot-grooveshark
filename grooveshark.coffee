@@ -9,11 +9,10 @@
 
 
 # Socket.io
-io = require("socket.io").listen(1337)
-
 # We only need 1 active connection
+io = require("socket.io").listen(1337)
 io.sockets.on "connection", (socket) ->
-	io = socket
+  io = socket
 
 module.exports = (robot) ->
   robot.router.get "/grooveshark/", (req, res) ->
@@ -40,7 +39,8 @@ module.exports = (robot) ->
 
   robot.respond /what's playing$/i, (msg) ->
     io.emit "com", "Grooveshark.getCurrentSongStatus()"
-    io.on "com", (res) ->
+
+    io.once "com", (res) ->
       msg.send "It's " + res.song.songName + " by " + res.song.artistName
 
 
