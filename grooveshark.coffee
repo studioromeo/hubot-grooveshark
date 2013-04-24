@@ -43,6 +43,39 @@ module.exports = (robot) ->
     io.once "com", (res) ->
       msg.send "It's " + res.song.songName + " by " + res.song.artistName
 
+  robot.respond /search (.*)$/i, (msg) ->
+    query = msg.match[1].split(' ').join('+')
+
+    msg.http('http://tinysong.com/s/'+query)
+      .query({
+        format: 'json'
+        limit: 3
+        key: '' #todo add key
+      })
+      .get() (err, res, body) ->
+        robot.brain.data.grooveshark = JSON.parse(body)
+
+        i = 0
+        data = JSON.parse(body)
+        while i < data.length
+          msg.send data[i]['SongName'] + ' by ' + data[i]['ArtistName']
+          i++
+
+  robot.respond /play (.*)$/i, (msg) ->
+    q = msg.match[1] - 1
+    io.emit "com", "Grooveshark.addSongsByID([" + robot.brain.data.grooveshark[q]['SongID'] + "])"
+
+    io.emit "com", "Grooveshark.getCurrentSongStatus()"
+
+    # Skip if the queue has ended
+    io.once "com", (res) ->
+      io.emit "com", "Grooveshark.next()" if res.status is 'completed'
+
+    msg.send 'Playing...'
+
+
+
+
 
 
 
