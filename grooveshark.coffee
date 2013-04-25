@@ -70,6 +70,7 @@ module.exports = (robot) ->
     # Skip if the queue has ended
     io.once "com", (res) ->
       io.emit "com", "Grooveshark.next()" if res.status is 'completed'
+      io.emit "com", "Grooveshark.play()" if res.status is 'none'
 
     msg.send 'Playing...'
 
